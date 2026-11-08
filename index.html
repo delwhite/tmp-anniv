@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff5f8">
+  <title>Compte à rebours – Anniversaire</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      padding: 24px; font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      color: #342633;
+      background: radial-gradient(circle at top, #fff 0, #fff5f8 48%, #f4eaff 100%);
+    }
+    main {
+      width: min(720px, 100%); text-align: center; padding: clamp(28px, 6vw, 56px);
+      border: 1px solid #f1dce8; border-radius: 28px; background: #ffffffd9;
+      box-shadow: 0 20px 70px #59334d18;
+    }
+    .emoji { font-size: 3.2rem; }
+    h1 { margin: 12px 0 8px; font-size: clamp(1.7rem, 5vw, 2.6rem); }
+    .date { color: #765f70; margin: 0 0 30px; }
+    .timer {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin: 0 auto 24px;
+    }
+    .unit {
+      padding: 20px 8px; border-radius: 18px; background: #fff2f7;
+      border: 1px solid #f5dce8;
+    }
+    .number { display: block; font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 750; font-variant-numeric: tabular-nums; }
+    .label { display: block; margin-top: 5px; color: #806a79; font-size: .9rem; }
+    .seconds {
+      margin: 18px 0 8px; color: #806a79; font-size: .95rem;
+    }
+    #totalSeconds { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 750; font-variant-numeric: tabular-nums; color: #a33e70; }
+    .note { margin: 24px 0 0; color: #907d8c; font-size: .85rem; }
+    @media (max-width: 480px) {
+      .timer { grid-template-columns: repeat(2, 1fr); }
+      .unit { padding: 16px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="emoji" aria-hidden="true">🎂🎈</div>
+    <h1>Plus que quelques instants !</h1>
+    <p class="date">Anniversaire : <strong>29 novembre 2026 à 18h17</strong></p>
+
+    <section class="timer" aria-label="Temps restant">
+      <div class="unit"><span class="number" id="days">—</span><span class="label">Jours</span></div>
+      <div class="unit"><span class="number" id="hours">—</span><span class="label">Heures</span></div>
+      <div class="unit"><span class="number" id="minutes">—</span><span class="label">Minutes</span></div>
+      <div class="unit"><span class="number" id="seconds">—</span><span class="label">Secondes</span></div>
+    </section>
+
+    <div class="seconds">Soit au total</div>
+    <div id="totalSeconds" aria-live="off">— secondes</div>
+    <p class="note" id="message">Le compte à rebours se met à jour automatiquement chaque seconde.</p>
+  </main>
+
+  <script>
+    // Heure de Paris : le 29 novembre 2026, Paris est à UTC+1.
+    const target = new Date("2026-11-29T18:17:00+01:00").getTime();
+    const ids = ["days", "hours", "minutes", "seconds"];
+    const numberFormat = new Intl.NumberFormat("fr-FR");
+
+    function updateCountdown() {
+      const remainingMs = target - Date.now();
+
+      if (remainingMs <= 0) {
+        ids.forEach(id => document.getElementById(id).textContent = "0");
+        document.getElementById("totalSeconds").textContent = "0 seconde";
+        document.getElementById("message").textContent = "Joyeux anniversaire ! 🎉";
+        return;
+      }
+
+      const totalSeconds = Math.floor(remainingMs / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      [days, hours, minutes, seconds].forEach((value, index) => {
+        document.getElementById(ids[index]).textContent = numberFormat.format(value);
+      });
+      document.getElementById("totalSeconds").textContent =
+        numberFormat.format(totalSeconds) + (totalSeconds > 1 ? " secondes" : " seconde");
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
